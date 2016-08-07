@@ -1,4 +1,4 @@
-from __builtin__ import False
+
 class UnifyingVariable:
     def __init__(self):
         self._isBound = False
@@ -7,11 +7,11 @@ class UnifyingVariable:
         if not self._isBound:
             self._value = arg
             self._isBound = True
-            yield False
+            yield None
             # Remove the binding.
             self._isBound = False
         elif self._value == arg:
-            yield False
+            yield None
             
 def generalGetValue(value):
     if value.__class__ == UnifyingVariable: 
@@ -27,57 +27,30 @@ def generalUnify(arg1, arg2):
     arg2Value = generalGetValue(arg2)
     if arg1Value.__class__ == UnifyingVariable:
         for l1 in arg1Value.unify(arg2Value):
-            yield False
+            yield None
     elif arg2Value.__class__ == UnifyingVariable:
         for l1 in arg2Value.unify(arg1Value):
-            yield False
+            yield None
     else:
         # Arguments are "normal" nonVar types.
         if arg1Value == arg2Value:
-            yield False
+            yield None
 
 
-# def personWithUnify(Person):
-#     for l1 in Person.unify("Chelsea"):
-#         yield False
-#     for l1 in Person.unify("Hillary"): # Person = "Hillary"
-#         yield False
-#     for l1 in Person.unify("Bill"):
-#         yield False
-        
-def person(Person):
-    for l1 in generalUnify(Person, "Chelsea"):  # Person = "Chelsea"
-        yield False
+def brother(Person, Brother):    
     for l1 in generalUnify(Person, "Hillary"):
-        yield False
+        for l2 in generalUnify(Brother, "Tony"):
+            yield None
+        for l2 in generalUnify(Brother, "Hugh"):
+            yield None
     for l1 in generalUnify(Person, "Bill"):
-        yield False
-
-# def main():
-#     print("Names using UnifyingVariable:")
-#     Person = UnifyingVariable()
-#     for l1 in personWithUnify(Person):
-#         print(Person._value)
-
-# def main():
-#     print("Use unify to check a person:")
-#     Person = UnifyingVariable()
-#     for l1 in Person.unify("Hillary"):
-#         for l2 in personWithUnify(Person):
-#             print("Hillary is a person.")
-#     for i0 in personWithUnify(Person):      # personWithUnify(Person)
-#         for i1 in Person.unify("Hillary"):  # Person = "Hillary"
-#             print i0,i1,Person
-#     for l1 in Person.unify("Buddy"):
-#         for l2 in personWithUnify(Person):
-#             # This won't print.
-#             print("Buddy is a person.")
+        for l2 in generalUnify(Brother, "Roger"):
+            yield None
 
 def main():
-    print("Use generalUnify to check a person:")
-    for l1 in person("Hillary"):
-        print("Hillary is a person.")
-    for l1 in person("Buddy"):
-        # This won't print.
-        print ("Buddy is a person.")
+    print("Find relations:")
+    Brother = UnifyingVariable()
+    for l1 in brother("Hillary", Brother):
+        print l1,("Hillary has brother " + 
+      Brother._value + ".")
 main()
